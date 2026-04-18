@@ -1,7 +1,6 @@
+package db
+
 type User struct {
-	ID int `json:"id"`
-	Name String `json:name`
-
+	ID   int    `json:"id"`
+	Name string `json:name`
 }
-
-func getUserData

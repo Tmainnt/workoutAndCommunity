@@ -1,0 +1,34 @@
+package db
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	"net/http"
+
+	_ "github.com/lib/pq"
+)
+
+func main() {
+	connStr := "user=postgres password=Reyzaburrel123@ dbname=myapp sslmode=disable"
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Connected to PostgresSQL!")
+
+	http.HandlerFunc("/register", registerHandler(db)) // ignore error just compile all file in project
+
+	// test on web server
+	log.Println("Server running on :8080")
+	http.ListenAndServe(":8080", nil)
+}

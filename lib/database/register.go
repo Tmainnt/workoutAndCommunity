@@ -1,14 +1,17 @@
+package db
+
 import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterRequest struct {
-	Name String `json:"user_name"`
-	Password String `json:"user_pass"`
-	Email String `json:"user_email"`
+	Name     string `json:"user_name"`
+	Password string `json:"user_pass"`
+	Email    string `json:"user_email"`
 }
 
 func registerHandler(db *sql.DB) http.HandlerFunc {

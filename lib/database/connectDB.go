@@ -1,9 +1,11 @@
-package main
+package db
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	"net/http"
 
 	_ "github.com/lib/pq"
 )
@@ -24,9 +26,9 @@ func main() {
 
 	fmt.Println("Connected to PostgresSQL!")
 
-	http.HandlerFunc("/register", registerHandler(db))
+	http.HandlerFunc("/register", registerHandler(db)) // ignore error just compile all file in project
 
 	// test on web server
 	log.Println("Server running on :8080")
-	http.ListenAndServer(":8080", nil)
+	http.ListenAndServe(":8080", nil)
 }

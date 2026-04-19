@@ -1,4 +1,7 @@
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
+import "package:woc/theme/text_color.dart";
+import "package:woc/theme/widget_color.dart";
 import "package:woc/widget/auth/custom_textfield.dart";
 
 class LoginForm extends StatefulWidget {
@@ -10,6 +13,8 @@ class LoginForm extends StatefulWidget {
 
 class LogFormState extends State<LoginForm> {
   bool isObscure = false;
+  WidgetColor widgetColor = WidgetColor();
+  TextColor textColor = TextColor();
 
   @override
   Widget build(BuildContext contexct) {
@@ -43,7 +48,10 @@ class LogFormState extends State<LoginForm> {
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.fromLTRB(25, 40, 25, 40),
-                color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
                 child: Column(
                   children: [
                     Column(
@@ -52,7 +60,7 @@ class LogFormState extends State<LoginForm> {
                           text: TextSpan(
                             text: "Pedometer & ",
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -60,7 +68,7 @@ class LogFormState extends State<LoginForm> {
                               TextSpan(
                                 text: "Workout",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 30,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.orange,
                                 ),
@@ -73,7 +81,7 @@ class LogFormState extends State<LoginForm> {
                     SizedBox(height: 10),
                     Text(
                       "ยินดีต้อนรับสู่แอปสุขภาพและการออกกำลังกาย",
-                      style: TextStyle(fontSize: 13),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Container(
                       padding: EdgeInsets.only(top: 20),
@@ -97,9 +105,76 @@ class LogFormState extends State<LoginForm> {
                         ],
                       ),
                     ),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        print("Click button");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: widgetColor.elevatedButtonAuth(),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text(
+                        "เข้าสู่ระบบ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+                    RichText(
+                      text: TextSpan(
+                        text: "ยังไม่เป็นสมาชิก? ",
+                        style: TextStyle(color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: "สมัครสมาชิก",
+                            style: TextStyle(
+                              color: textColor.highlightTextAuth(),
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                print("Click text");
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Divider(color: widgetColor.dividerColor(), thickness: 1),
+                    SizedBox(height: 15),
+                    _signInWithGoogle(),
                   ],
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _signInWithGoogle() {
+    return OutlinedButton(
+      onPressed: () {},
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: widgetColor.textfieldShadow()),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Colors.white,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('assets/image/google_logo.png', height: 24),
+          const SizedBox(width: 12),
+          const Text(
+            "ดำเนินการต่อโดยใช้ Google",
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

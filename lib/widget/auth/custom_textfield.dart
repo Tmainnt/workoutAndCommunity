@@ -34,12 +34,11 @@ class CustomTextFieldState extends State<CustomTextField> {
           padding: EdgeInsets.only(left: 3, right: 3),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: BoxBorder.all(color: widget.widgetColor.textfieldShadow()),
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
                 color: widget.widgetColor.textfieldShadow(),
-                offset: Offset(0, 2),
+                offset: Offset(1, 2),
                 blurRadius: 4,
               ),
             ],

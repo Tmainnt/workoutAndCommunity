@@ -35,7 +35,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           decoration: BoxDecoration(
             color: Colors.white,
             border: BoxBorder.all(color: widget.widgetColor.textfieldShadow()),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
                 color: widget.widgetColor.textfieldShadow(),

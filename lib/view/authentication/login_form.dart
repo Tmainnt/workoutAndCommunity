@@ -9,8 +9,6 @@ class LoginForm extends StatefulWidget {
 }
 
 class LogFormState extends State<LoginForm> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   bool isObscure = false;
 
   @override
@@ -22,7 +20,7 @@ class LogFormState extends State<LoginForm> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.lightGreen,
+            color: const Color.fromARGB(255, 0, 104, 94),
           ),
 
           // ใช้จริง
@@ -84,12 +82,12 @@ class LogFormState extends State<LoginForm> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomTextfield(
+                              CustomTextField(
                                 topic: "อีเมล",
                                 isObscure: false,
                                 textInputType: "",
                               ),
-                              CustomTextfield(
+                              CustomTextField(
                                 topic: "รหัสผ่าน",
                                 isObscure: true,
                                 textInputType: "",

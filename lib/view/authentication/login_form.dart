@@ -2,6 +2,7 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:woc/theme/text_color.dart";
 import "package:woc/theme/widget_color.dart";
+import "package:woc/view/authentication/register_form.dart";
 import "package:woc/widget/auth/custom_textfield.dart";
 
 class LoginForm extends StatefulWidget {
@@ -21,14 +22,6 @@ class LogFormState extends State<LoginForm> {
     return Scaffold(
       body: Stack(
         children: [
-          // test
-          /*Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: const Color.fromARGB(255, 0, 104, 94),
-          ),*/
-
-          // ใช้จริง
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -136,7 +129,12 @@ class LogFormState extends State<LoginForm> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                print("Click text");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const RegisterForm(),
+                                  ),
+                                );
                               },
                           ),
                         ],

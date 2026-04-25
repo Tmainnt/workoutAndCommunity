@@ -3,7 +3,7 @@ import 'package:woc/theme/widget_color.dart';
 
 class CustomTextField extends StatefulWidget {
   final String _topic;
-  bool isObscure;
+  final bool isObscure;
   final String textInputType;
 
   CustomTextField({

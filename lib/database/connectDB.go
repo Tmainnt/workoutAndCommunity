@@ -25,7 +25,8 @@ func main() {
 
 	fmt.Println("Connected to PostgresSQL!")
 
-	http.HandleFunc("/register", registerHandler(db)) // ignore error just compile all file in project
+	http.HandleFunc("/register", registerHandler(db))
+	http.HandleFunc("/loging", loginHandler(db))
 
 	http.ListenAndServe(":8080", nil)
 }

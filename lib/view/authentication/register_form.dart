@@ -112,28 +112,67 @@ class RegisterFormState extends State<RegisterForm> {
                                   SizedBox(height: 8),
                                   Row(
                                     children: [
-                                      DropdownMenu(
-                                        onSelected: (value) {
-                                          setState(() {});
-                                        },
-                                        controller: genderController,
-                                        hintText: "เลือก",
-                                        dropdownMenuEntries:
-                                            <DropdownMenuEntry<String>>[
-                                              DropdownMenuEntry(
-                                                value: "ชาย",
-                                                label: "ชาย",
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: widgetColor.widgetShadow(),
+                                              offset: Offset(1, 2),
+                                              blurRadius: 4,
+                                            ),
+                                          ],
+                                        ),
+                                        child: DropdownMenu(
+                                          inputDecorationTheme:
+                                              InputDecorationTheme(
+                                                border: OutlineInputBorder(
+                                                  borderSide: BorderSide.none,
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
                                               ),
-                                              DropdownMenuEntry(
-                                                value: "หญิง",
-                                                label: "หญิง",
+                                          menuStyle: MenuStyle(
+                                            shadowColor:
+                                                WidgetStateProperty.all(
+                                                  widgetColor.widgetShadow(),
+                                                ),
+                                            elevation: WidgetStateProperty.all(
+                                              8,
+                                            ),
+                                            shape: WidgetStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
                                               ),
-                                              DropdownMenuEntry(
-                                                value: "อื่นๆ",
-                                                label: "อื่นๆ",
-                                              ),
-                                            ],
+                                            ),
+                                          ),
+                                          onSelected: (value) {
+                                            setState(() {});
+                                          },
+                                          controller: genderController,
+                                          hintText: "เลือก",
+                                          dropdownMenuEntries:
+                                              <DropdownMenuEntry<String>>[
+                                                DropdownMenuEntry(
+                                                  value: "ชาย",
+                                                  label: "ชาย",
+                                                ),
+                                                DropdownMenuEntry(
+                                                  value: "หญิง",
+                                                  label: "หญิง",
+                                                ),
+                                                DropdownMenuEntry(
+                                                  value: "อื่นๆ",
+                                                  label: "อื่นๆ",
+                                                ),
+                                              ],
+                                        ),
                                       ),
+
                                       ?genderController.text.isNotEmpty
                                           ? IconButton(
                                               onPressed: () {

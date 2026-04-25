@@ -37,7 +37,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         Text(widget._topic, style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 8),
         Container(
-          padding: EdgeInsets.only(left: 3, right: 3),
+          padding: EdgeInsets.only(left: 7, right: 7),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),

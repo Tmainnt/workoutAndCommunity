@@ -22,28 +22,28 @@ class LogFormState extends State<LoginForm> {
       body: Stack(
         children: [
           // test
-          Container(
+          /*Container(
             width: double.infinity,
             height: double.infinity,
             color: const Color.fromARGB(255, 0, 104, 94),
-          ),
+          ),*/
 
           // ใช้จริง
-
-          /*Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(""),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.6,
-                    BlendMode.darken)
-                  )
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/image/login_bg.jpeg"),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.6),
+                  BlendMode.darken,
                 ),
               ),
-            ),*/
+            ),
+          ),
+
           Center(
             child: SingleChildScrollView(
               child: Container(

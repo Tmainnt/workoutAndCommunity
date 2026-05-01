@@ -3,45 +3,42 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterRequest struct {
-	Name     string   `json:"user_name"`
-	Password string   `json:"user_pass"`
-	Email    string   `json:"user_email"`
-	FName    string   `json:"first_name"`
-	LName    string   `json:"last_name"`
-	Gender   string   `json:"user_gender"`
-	DOF      string   `json:"date_of_birth"`
-	PhoneNB  string   `json:"phone_number"`
-	Role     UserRole `json:"role"`
+	Name     string `json:"user_name"`
+	Password string `json:"user_pass"`
+	Email    string `json:"user_email"`
+	Gender   string `json:"user_gender"`
+	DOF      string `json:"date_of_birth"`
+	PhoneNB  string `json:"phone_number"`
 }
 
 type UserRole string
-
-const (
-	RoleUser UserRole = "User"
-)
 
 func registerHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req RegisterRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			http.Error(w, "Invalid json", 400)
+			http.Error(w, "Invalid json", 306)
+			log.Println(err)
 			return
 		}
 
 		if req.Name == "" || req.Email == "" || req.Password == "" {
 			http.Error(w, "Email and password required", 400)
+			log.Println(err)
 		}
 
 		hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			http.Error(w, "Hash error", 500)
+			log.Println(err)
 			return
 		}
 
@@ -53,14 +50,16 @@ func registerHandler(db *sql.DB) http.HandlerFunc {
 			req.Gender,
 			req.DOF,
 			req.PhoneNB,
-			RoleUser,
+			"User",
 		)
 
 		if err != nil {
 			http.Error(w, err.Error(), 500)
+			log.Println(err)
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("register success"))
 	}

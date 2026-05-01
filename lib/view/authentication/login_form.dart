@@ -1,11 +1,15 @@
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
+import "package:woc/model/user.dart";
+import "package:woc/provider/user_provider.dart";
 import "package:woc/theme/text_color.dart";
 import "package:woc/theme/widget_color.dart";
 import "package:woc/view/authentication/register_form.dart";
+import "package:woc/view/home_page.dart";
 import "package:woc/widget/auth/custom_textfield.dart";
 import "package:http/http.dart" as http;
 import "dart:convert";
+import "package:provider/provider.dart";
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -18,6 +22,8 @@ class LogFormState extends State<LoginForm> {
   bool isObscure = false;
   WidgetColor widgetColor = WidgetColor();
   TextColor textColor = TextColor();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext contexct) {
@@ -89,11 +95,13 @@ class LogFormState extends State<LoginForm> {
                                 topic: "อีเมล",
                                 isObscure: false,
                                 textInputType: "",
+                                textEditingController: emailController,
                               ),
                               CustomTextField(
                                 topic: "รหัสผ่าน",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController: passwordController,
                               ),
                             ],
                           ),
@@ -103,7 +111,7 @@ class LogFormState extends State<LoginForm> {
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
-                        print("Click button");
+                        loginButtonAction();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: widgetColor.elevatedButtonAuth(),
@@ -183,12 +191,33 @@ class LogFormState extends State<LoginForm> {
     );
   }
 
-  Future loginButton() async {
-    final url = Uri.parse("https://kindling-magnifier-late.ngrok-free.dev");
-    final response = await http.post(
-      url,
-      headers: {"content-type": "application/json"},
-      body: jsonEncode({}),
-    );
+  Future<dynamic> loginButtonAction() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      final url = Uri.parse(
+        "https://kindling-magnifier-late.ngrok-free.dev/login",
+      );
+      final response = await http.post(
+        url,
+        headers: {"content-type": "application/json"},
+        body: jsonEncode({
+          "user_email": emailController.text,
+          "user_pass": passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final userData = User.fromJson(jsonDecode(response.body));
+
+        Provider.of<UserProvider>(context, listen: false).setUser(userData);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+    } else {
+      return ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("อีเมลหรือรหัสผ่านไม่ถูกต้อง")));
+    }
   }
 }

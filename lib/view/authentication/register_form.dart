@@ -17,6 +17,11 @@ class RegisterFormState extends State<RegisterForm> {
   TextColor textColor = TextColor();
   List<String> gender = ["ชาย", "หญิง", "อื่นๆ"];
   TextEditingController genderController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController fnameController = TextEditingController();
+  TextEditingController lnameController = TextEditingController();
 
   @override
   Widget build(BuildContext contexct) {
@@ -79,26 +84,32 @@ class RegisterFormState extends State<RegisterForm> {
                                 topic: "อีเมล",
                                 isObscure: false,
                                 textInputType: "",
+                                textEditingController: emailController,
                               ),
                               CustomTextField(
                                 topic: "รหัสผ่าน",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController: passwordController,
                               ),
                               CustomTextField(
                                 topic: "ยืนยันรหัสผ่าน",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController:
+                                    confirmPasswordController,
                               ),
                               CustomTextField(
                                 topic: "ชื่อ",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController: fnameController,
                               ),
                               CustomTextField(
                                 topic: "นามสกุล",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController: lnameController,
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

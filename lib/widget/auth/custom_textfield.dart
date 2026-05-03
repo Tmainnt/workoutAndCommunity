@@ -7,7 +7,7 @@ class CustomTextField extends StatefulWidget {
   final String textInputType;
   final TextEditingController textEditingController;
 
-  CustomTextField({
+  const CustomTextField({
     super.key,
     required String topic,
     required this.isObscure,

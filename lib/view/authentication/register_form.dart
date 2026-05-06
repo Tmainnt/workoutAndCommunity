@@ -16,6 +16,7 @@ class RegisterForm extends StatefulWidget {
 }
 
 class RegisterFormState extends State<RegisterForm> {
+  bool isLoading = false;
   WidgetColor widgetColor = WidgetColor();
   TextColor textColor = TextColor();
   List<String> gender = ["ชาย", "หญิง", "อื่นๆ"];
@@ -24,7 +25,6 @@ class RegisterFormState extends State<RegisterForm> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
-  TextEditingController dobController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController dayController = TextEditingController();
   TextEditingController monthController = TextEditingController();
@@ -91,7 +91,7 @@ class RegisterFormState extends State<RegisterForm> {
                               CustomTextField(
                                 topic: "อีเมล",
                                 isObscure: false,
-                                textInputType: "",
+                                textInputType: "email",
                                 textEditingController: emailController,
                               ),
                               CustomTextField(
@@ -116,7 +116,7 @@ class RegisterFormState extends State<RegisterForm> {
                               CustomTextField(
                                 topic: "เบอร์โทรศัพท์",
                                 isObscure: false,
-                                textInputType: "",
+                                textInputType: "number",
                                 textEditingController: phoneNumberController,
                               ),
                               Row(
@@ -202,7 +202,7 @@ class RegisterFormState extends State<RegisterForm> {
                                             ),
                                           ),
 
-                                          ?genderController.text.isNotEmpty
+                                          genderController.text.isNotEmpty
                                               ? IconButton(
                                                   onPressed: () {
                                                     genderController.clear();
@@ -211,7 +211,7 @@ class RegisterFormState extends State<RegisterForm> {
                                                   icon: Icon(Icons.cancel),
                                                   color: widgetColor.cancel(),
                                                 )
-                                              : null,
+                                              : SizedBox(),
                                         ],
                                       ),
                                     ],
@@ -262,7 +262,9 @@ class RegisterFormState extends State<RegisterForm> {
                                             children: [
                                               Center(
                                                 child: Text(
-                                                  "กดเพื่อกรอก",
+                                                  dayController.text.isNotEmpty
+                                                      ? "${dayController.text}/${monthController.text}/${yearController.text}"
+                                                      : "กดเพื่อกรอก",
                                                   style: TextStyle(
                                                     color: Colors.black54,
                                                   ),
@@ -296,9 +298,9 @@ class RegisterFormState extends State<RegisterForm> {
                     ),
                     SizedBox(height: 15),
                     ElevatedButton(
-                      onPressed: () {
-                        registerButtonAction();
-                      },
+                      onPressed: isLoading
+                          ? null
+                          : () => registerButtonAction(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: widgetColor.elevatedButtonAuth(),
                         foregroundColor: Colors.white,
@@ -347,22 +349,56 @@ class RegisterFormState extends State<RegisterForm> {
   }
 
   void registerButtonAction() async {
-    final url = Uri.parse(
-      "https://kindling-magnifier-late.ngrok-free.dev/register",
-    );
+    if (emailController.text.isNotEmpty &&
+        nameController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        genderController.text.isNotEmpty &&
+        (dayController.text.isNotEmpty &&
+            monthController.text.isNotEmpty &&
+            yearController.text.isNotEmpty)) {
+      if (passwordController.text != confirmPasswordController.text) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("รหัสผ่านไม่ตรงกัน")));
+        return;
+      }
+      final url = Uri.parse(
+        "https://kindling-magnifier-late.ngrok-free.dev/register",
+      );
 
-    final response = await http.post(
-      url,
-      headers: {"content-type": "application/json"},
-      body: jsonEncode({
-        "user_name": nameController.text,
-        "user_email": emailController,
-        "user_pass": passwordController,
-        "gender": genderController,
-        "date_of_birth": dobController,
-        "phone_number": phoneNumberController,
-      }),
-    );
+      final String dob =
+          "${dayController.text}/${monthController.text}/${yearController.text}";
+
+      final response = await http.post(
+        url,
+        headers: {"content-type": "application/json"},
+        body: jsonEncode({
+          "user_name": nameController.text,
+          "user_email": emailController.text,
+          "user_pass": passwordController.text,
+          "gender": genderController.text,
+          "date_of_birth": dob,
+          "phone_number": phoneNumberController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginForm()),
+        );
+      } else {
+        print(response.body);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("สมัครไม่สำเร็จ")));
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("กรุณากรอกข้อมูลให้ครบ")));
+    }
   }
 
   Future<dynamic> birthDayData(BuildContext context) {

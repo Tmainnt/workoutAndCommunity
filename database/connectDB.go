@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	connStr := "user=postgres password=Reyzaburrel123@ dbname=postgres sslmode=disable"
+	connStr := "user=postgres password=Reyzaburrel123@ dbname=postgres sslmode=disable options='--client_enconding=UTF8'"
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {

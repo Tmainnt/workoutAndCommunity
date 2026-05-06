@@ -111,10 +111,6 @@ class LogFormState extends State<LoginForm> {
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
-                        print("click Button!!!");
-                        // debug
-                        print(emailController.text);
-                        print(passwordController.text);
                         loginButtonAction();
                       },
                       style: ElevatedButton.styleFrom(
@@ -210,9 +206,6 @@ class LogFormState extends State<LoginForm> {
       );
 
       final data = jsonDecode(response.body);
-      print("StatusCode: ${response.statusCode}");
-      print("Json Body: ${data}");
-      print("Token: ${data['token']}");
 
       if (response.statusCode == 200) {
         final userData = User.fromJson(data['user'], data['token']);

@@ -24,11 +24,6 @@ class User {
        _role = role;
 
   factory User.fromJson(Map<String, dynamic> json, String tokenStr) {
-    print("Now u are in UserModel \n This is token: ${tokenStr}");
-    print(
-      "${json["user_email"]} \n ${json["user_name"]} \n ${json["date_of_birth"]} \n ${json["phone_number"]} \n ${json["user_gender"]} \n ${json["role"]}",
-    );
-
     return User(
       token: tokenStr,
       email: json["user_email"],

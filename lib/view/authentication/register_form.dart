@@ -377,8 +377,6 @@ class RegisterFormState extends State<RegisterForm> {
           MaterialPageRoute(builder: (context) => LoginForm()),
         );
       } else {
-        print(response.body);
-
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("สมัครไม่สำเร็จ")));

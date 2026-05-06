@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:woc/provider/user_provider.dart';
 import 'package:woc/view/authentication/login_form.dart';
-import 'package:woc/view/authentication/register_form.dart';
-import 'package:woc/view/community/post_page.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(create: (_) => UserProvider(), child: MyApp()));

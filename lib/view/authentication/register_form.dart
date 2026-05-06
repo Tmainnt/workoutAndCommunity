@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:woc/theme/text_color.dart';
 import 'package:woc/theme/widget_color.dart';
 import 'package:woc/view/authentication/login_form.dart';
 import 'package:woc/widget/auth/custom_textfield.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -13,10 +16,19 @@ class RegisterForm extends StatefulWidget {
 }
 
 class RegisterFormState extends State<RegisterForm> {
+  bool isLoading = false;
   WidgetColor widgetColor = WidgetColor();
   TextColor textColor = TextColor();
-  List<String> gender = ["ชาย", "หญิง", "อื่นๆ"];
-  TextEditingController genderController = TextEditingController();
+  String? selectedGender;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController dayController = TextEditingController();
+  TextEditingController monthController = TextEditingController();
+  TextEditingController yearController = TextEditingController();
+  bool clickDob = false;
 
   @override
   Widget build(BuildContext contexct) {
@@ -78,111 +90,192 @@ class RegisterFormState extends State<RegisterForm> {
                               CustomTextField(
                                 topic: "อีเมล",
                                 isObscure: false,
+                                textInputType: "email",
+                                textEditingController: emailController,
+                              ),
+                              CustomTextField(
+                                topic: "ชื่อผู้ใช้งาน",
+                                isObscure: false,
                                 textInputType: "",
+                                textEditingController: nameController,
                               ),
                               CustomTextField(
                                 topic: "รหัสผ่าน",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController: passwordController,
                               ),
                               CustomTextField(
                                 topic: "ยืนยันรหัสผ่าน",
                                 isObscure: true,
                                 textInputType: "",
+                                textEditingController:
+                                    confirmPasswordController,
                               ),
                               CustomTextField(
-                                topic: "ชื่อ",
-                                isObscure: true,
-                                textInputType: "",
+                                topic: "เบอร์โทรศัพท์",
+                                isObscure: false,
+                                textInputType: "number",
+                                textEditingController: phoneNumberController,
                               ),
-                              CustomTextField(
-                                topic: "นามสกุล",
-                                isObscure: true,
-                                textInputType: "",
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Text(
-                                    "เพศ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Row(
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            15,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: widgetColor.widgetShadow(),
-                                              offset: Offset(1, 2),
-                                              blurRadius: 4,
-                                            ),
-                                          ],
-                                        ),
-                                        child: DropdownMenu(
-                                          inputDecorationTheme:
-                                              InputDecorationTheme(
-                                                border: OutlineInputBorder(
-                                                  borderSide: BorderSide.none,
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                ),
-                                              ),
-                                          menuStyle: MenuStyle(
-                                            shadowColor:
-                                                WidgetStateProperty.all(
-                                                  widgetColor.widgetShadow(),
-                                                ),
-                                            elevation: WidgetStateProperty.all(
-                                              8,
-                                            ),
-                                            shape: WidgetStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                            ),
-                                          ),
-                                          onSelected: (value) {
-                                            setState(() {});
-                                          },
-                                          controller: genderController,
-                                          hintText: "เลือก",
-                                          dropdownMenuEntries:
-                                              <DropdownMenuEntry<String>>[
-                                                DropdownMenuEntry(
-                                                  value: "ชาย",
-                                                  label: "ชาย",
-                                                ),
-                                                DropdownMenuEntry(
-                                                  value: "หญิง",
-                                                  label: "หญิง",
-                                                ),
-                                                DropdownMenuEntry(
-                                                  value: "อื่นๆ",
-                                                  label: "อื่นๆ",
-                                                ),
-                                              ],
+                                      Text(
+                                        "เพศ",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-
-                                      ?genderController.text.isNotEmpty
-                                          ? IconButton(
-                                              onPressed: () {
-                                                genderController.clear();
-                                                setState(() {});
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: widgetColor
+                                                      .widgetShadow(),
+                                                  offset: Offset(1, 2),
+                                                  blurRadius: 4,
+                                                ),
+                                              ],
+                                            ),
+                                            child: DropdownMenu(
+                                              inputDecorationTheme:
+                                                  InputDecorationTheme(
+                                                    border: OutlineInputBorder(
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            15,
+                                                          ),
+                                                    ),
+                                                  ),
+                                              menuStyle: MenuStyle(
+                                                shadowColor:
+                                                    WidgetStateProperty.all(
+                                                      widgetColor
+                                                          .widgetShadow(),
+                                                    ),
+                                                elevation:
+                                                    WidgetStateProperty.all(8),
+                                                shape: WidgetStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          15,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                              onSelected: (value) {
+                                                setState(() {
+                                                  selectedGender = value;
+                                                });
                                               },
-                                              icon: Icon(Icons.cancel),
-                                              color: widgetColor.cancel(),
-                                            )
-                                          : null,
+                                              hintText: "เลือก",
+                                              dropdownMenuEntries:
+                                                  <DropdownMenuEntry<String>>[
+                                                    DropdownMenuEntry(
+                                                      value: "Male",
+                                                      label: "ชาย",
+                                                    ),
+                                                    DropdownMenuEntry(
+                                                      value: "Female",
+                                                      label: "หญิง",
+                                                    ),
+                                                    DropdownMenuEntry(
+                                                      value: "Other",
+                                                      label: "อื่นๆ",
+                                                    ),
+                                                  ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "วันเกิด",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            clickDob = !clickDob;
+                                          });
+                                          birthDayData(context);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                            left: 8,
+                                            right: 8,
+                                          ),
+                                          height: 55,
+                                          width: 139,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: widgetColor
+                                                    .widgetShadow(),
+                                                offset: Offset(1, 2),
+                                                blurRadius: 4,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  dayController.text.isNotEmpty
+                                                      ? "${dayController.text}/${monthController.text}/${yearController.text}"
+                                                      : "กดเพื่อกรอก",
+                                                  style: TextStyle(
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    clickDob = !clickDob;
+                                                  });
+                                                  birthDayData(context);
+                                                },
+                                                icon: clickDob
+                                                    ? Icon(Icons.arrow_drop_up)
+                                                    : Icon(
+                                                        Icons.arrow_drop_down,
+                                                      ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -192,11 +285,11 @@ class RegisterFormState extends State<RegisterForm> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 15),
                     ElevatedButton(
-                      onPressed: () {
-                        print("Click button");
-                      },
+                      onPressed: isLoading
+                          ? null
+                          : () => registerButtonAction(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: widgetColor.elevatedButtonAuth(),
                         foregroundColor: Colors.white,
@@ -238,6 +331,138 @@ class RegisterFormState extends State<RegisterForm> {
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void registerButtonAction() async {
+    if (emailController.text.isNotEmpty &&
+        nameController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        selectedGender != null &&
+        (dayController.text.isNotEmpty &&
+            monthController.text.isNotEmpty &&
+            yearController.text.isNotEmpty)) {
+      if (passwordController.text != confirmPasswordController.text) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("รหัสผ่านไม่ตรงกัน")));
+        return;
+      }
+      final url = Uri.parse(
+        "https://kindling-magnifier-late.ngrok-free.dev/register",
+      );
+
+      final String dob =
+          "${dayController.text}/${monthController.text}/${yearController.text}";
+
+      final response = await http.post(
+        url,
+        headers: {"content-type": "application/json"},
+        body: jsonEncode({
+          "user_name": nameController.text,
+          "user_email": emailController.text,
+          "user_pass": passwordController.text,
+          "gender": selectedGender,
+          "date_of_birth": dob,
+          "phone_number": phoneNumberController.text,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginForm()),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("สมัครไม่สำเร็จ")));
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("กรุณากรอกข้อมูลให้ครบ")));
+    }
+  }
+
+  Future<dynamic> birthDayData(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: SizedBox(
+          height: 100,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("วัน"),
+                    TextField(
+                      decoration: InputDecoration(hintText: dayController.text),
+                      controller: dayController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
+                ),
+              ),
+
+              VerticalDivider(thickness: 1),
+
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("เดือน"),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: monthController.text,
+                      ),
+                      controller: monthController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
+                ),
+              ),
+
+              VerticalDivider(thickness: 1),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("ปี"),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: yearController.text,
+                      ),
+                      controller: yearController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("ยกเลิก", style: TextStyle(color: Colors.red)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                clickDob = !clickDob;
+              });
+              Navigator.pop(context);
+            },
+            child: Text("บันทึก"),
           ),
         ],
       ),

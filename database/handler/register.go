@@ -1,8 +1,9 @@
-package db
+package handler
 
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -12,49 +13,53 @@ type RegisterRequest struct {
 	Name     string `json:"user_name"`
 	Password string `json:"user_pass"`
 	Email    string `json:"user_email"`
-	FName    string `json:"first_name"`
-	LName    string `json:"last_name"`
-	Gender   string `json:"user_gender"`
+	Gender   string `json:"gender"`
 	DOF      string `json:"date_of_birth"`
 	PhoneNB  string `json:"phone_number"`
 }
 
-func registerHandler(db *sql.DB) http.HandlerFunc {
+type UserRole string
+
+func RegisterHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req RegisterRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			http.Error(w, "Invalid json", 400)
+			http.Error(w, "Invalid json", 306)
+			log.Println(err)
 			return
 		}
 
 		if req.Name == "" || req.Email == "" || req.Password == "" {
 			http.Error(w, "Email and password required", 400)
+			log.Println(err)
 		}
 
 		hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			http.Error(w, "Hash error", 500)
+			log.Println(err)
 			return
 		}
 
 		_, err = db.Exec(
-			"INSERT INTO users(user_name, user_pass, user_email, first_name, last_name, user_gender, date_of_birth, phone_number) VALUES($1, $2, $3, $4, $5, $6, $7, $8)",
+			"INSERT INTO users(user_name, user_pass, user_email, gender, date_of_birth, phone_number, role) VALUES($1, $2, $3, $4, $5, $6, $7)",
 			req.Name,
 			string(hashed),
 			req.Email,
-			req.FName,
-			req.LName,
 			req.Gender,
 			req.DOF,
 			req.PhoneNB,
+			"User",
 		)
 
 		if err != nil {
 			http.Error(w, err.Error(), 500)
+			log.Println(err)
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("register success"))
 	}

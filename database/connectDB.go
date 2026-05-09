@@ -30,7 +30,8 @@ func main() {
 
 	http.HandleFunc("/register", handler.RegisterHandler(db))
 	http.HandleFunc("/login", handler.LoginHandler(db))
-	http.HandleFunc("/readPost", auth.AuthMiddelware(pdb.ReadPostData()))
+	http.HandleFunc("/readPost", auth.AuthMiddelware(pdb.ReadPostData(db)))
+	http.HandleFunc("/writeBack", auth.AuthMiddelware(pdb.WriteBack(db)))
 
 	http.ListenAndServe(":8080", nil)
 }

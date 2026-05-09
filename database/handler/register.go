@@ -18,7 +18,6 @@ type RegisterRequest struct {
 	PhoneNB  string `json:"phone_number"`
 }
 
-
 func RegisterHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req RegisterRequest

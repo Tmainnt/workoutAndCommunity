@@ -1,16 +1,10 @@
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
-import "package:woc/model/user.dart";
-import "package:woc/provider/user_provider.dart";
+import "package:woc/service/auth_service.dart";
 import "package:woc/theme/text_color.dart";
 import "package:woc/theme/widget_color.dart";
 import "package:woc/view/authentication/register_form.dart";
-import "package:woc/view/home_page.dart";
 import "package:woc/widget/auth/custom_textfield.dart";
-import "package:http/http.dart" as http;
-import "dart:convert";
-import "package:provider/provider.dart";
-import "package:woc/service/post_service.dart";
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -112,7 +106,7 @@ class LogFormState extends State<LoginForm> {
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
-                        PostService().loginButtonAction(
+                        AuthService().loginButtonAction(
                           emailController,
                           passwordController,
                           context,

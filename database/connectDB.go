@@ -9,8 +9,22 @@ import (
 
 	"net/http"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+
+	//"github.com/cloudinary/cloudinary-go/v2/api"
+	//"github.com/cloudinary/cloudinary-go/v2/api/admin"
+	//"github.com/cloudinary/cloudinary-go/v2/api/uploader"
+	"context"
+
 	_ "github.com/lib/pq"
 )
+
+func credentials() (*cloudinary.Cloudinary, context.Context) {
+	cld, _ := cloudinary.New()
+	cld.Config.URL.Secure = true
+	ctx := context.Background()
+	return cld, ctx
+}
 
 func main() {
 	connStr := "user=postgres password=Reyzaburrel123@ dbname=postgres sslmode=disable"

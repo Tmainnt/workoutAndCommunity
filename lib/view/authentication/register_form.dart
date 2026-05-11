@@ -287,18 +287,7 @@ class RegisterFormState extends State<RegisterForm> {
                     ElevatedButton(
                       onPressed: isLoading
                           ? null
-                          : () => AuthService().registerButtonAction(
-                              emailController,
-                              nameController,
-                              passwordController,
-                              selectedGender,
-                              dayController,
-                              monthController,
-                              yearController,
-                              confirmPasswordController,
-                              context,
-                              phoneNumberController,
-                            ),
+                          : () => registerButtonAction(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: widgetColor.elevatedButtonAuth(),
                         foregroundColor: Colors.white,
@@ -344,6 +333,48 @@ class RegisterFormState extends State<RegisterForm> {
         ],
       ),
     );
+  }
+
+  dynamic registerButtonAction() async {
+    if (emailController.text.isNotEmpty &&
+        nameController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        selectedGender != null &&
+        (dayController.text.isNotEmpty &&
+            monthController.text.isNotEmpty &&
+            yearController.text.isNotEmpty)) {
+      if (passwordController.text != confirmPasswordController.text) {
+        return ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("รหัสผ่านไม่ตรงกัน")));
+      }
+
+      try {
+        await AuthService().registerResponseStatusCode(
+          emailController.text,
+          nameController.text,
+          passwordController.text,
+          selectedGender,
+          dayController.text,
+          monthController.text,
+          yearController.text,
+          confirmPasswordController.text,
+          phoneNumberController.text,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginForm()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("สมัครไม่สำเร็จ")));
+      }
+    } else {
+      return ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("กรุณากรอกข้อมูลให้ครบ")));
+    }
   }
 
   Future<dynamic> birthDayData(BuildContext context) {

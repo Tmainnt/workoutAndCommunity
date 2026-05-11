@@ -5,6 +5,10 @@ class Post {
   String _image;
   final DateTime _createTimestamp;
   DateTime _updteTimestamp;
+  String _postVisibility;
+  String _postStatus;
+  int _likeCount;
+  int _commentCount;
 
   Post({
     required int postId,
@@ -13,12 +17,20 @@ class Post {
     required String image,
     required DateTime cts,
     required DateTime uts,
+    required String postV,
+    required String postS,
+    required int likeCount,
+    required int commentCount,
   }) : _postId = postId,
        _userId = userId,
        _content = content,
        _image = image,
        _createTimestamp = cts,
-       _updteTimestamp = uts;
+       _updteTimestamp = uts,
+       _postVisibility = postV,
+       _postStatus = postS,
+       _likeCount = likeCount,
+       _commentCount = commentCount;
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
@@ -28,6 +40,10 @@ class Post {
       image: json["post_image"],
       cts: json["create_timestamp"],
       uts: json["update_timestamp"],
+      postV: json["post_visibility"],
+      postS: json["post_status"],
+      likeCount: json["like_count"],
+      commentCount: json["comment_count"],
     );
   }
 
@@ -37,4 +53,8 @@ class Post {
   String get image => _image;
   DateTime get createTimestamp => _createTimestamp;
   DateTime get updateTimestatmp => _updteTimestamp;
+  String get postVisiblity => _postVisibility;
+  String get postStatus => _postStatus;
+  int get likeCount => _likeCount;
+  int get commentCount => _commentCount;
 }

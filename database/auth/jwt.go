@@ -16,13 +16,14 @@ type Claims struct {
 }
 
 type RefreshClaims struct {
+	TokenID   string `json:"token_id"`
 	UserID    int    `json:"user_id"`
 	Email     string `json:"email"`
 	TokenType string `json:"type"`
 	jwt.RegisteredClaims
 }
 
-var jwtKey = []byte(os.Getenv("qKEOym4Uusvl0Oh1WSwH"))
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateAccessToken(id int, email string, role string) (string, error) {
 	expirationTime := time.Now().Add(15 * time.Minute)
@@ -66,5 +67,15 @@ func ParseToken(tokenStr string) (*Claims, error) {
 		return claims, nil
 	}
 
+	return nil, err
+}
+
+func ParseRefreshToken(tokenStr string) (*RefreshClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &RefreshClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if claims, ok := token.Claims.(*RefreshClaims); ok && token.Valid {
+		return claims, nil
+	}
 	return nil, err
 }

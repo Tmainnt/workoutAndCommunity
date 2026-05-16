@@ -89,20 +89,35 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		db.Exec(`DELETE FROM refresh_token WHERE user_id_fk = $1`, user.ID)
+
 		token, err := auth.GenerateAccessToken(user.ID, user.Email, user.Role)
 		if err != nil {
 			http.Error(w, "Can't generate token.", 500)
+			return
 		}
 
 		_, err = db.Exec("UPDATE users SET status=$2 WHERE user_email = $1", user.Email, "Active")
 		if err != nil {
 			http.Error(w, "Can't update database.", 500)
+			return
 		}
 
 		refreshToken, err := auth.GenerateRefreshToken(user.ID, user.Email, user.Role)
 		if err != nil {
 			http.Error(w, "Can't generate token.", 500)
+			return
 		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "refresh_token",
+			Value:    refreshToken,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteStrictMode,
+			Expires:  time.Now().Add(7 * 24 * time.Hour),
+			Path:     "/refresh",
+		})
 
 		hashToken, err := bcrypt.GenerateFromPassword([]byte(refreshToken), bcrypt.DefaultCost)
 		if err != nil {
@@ -111,7 +126,11 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		_, err = db.Exec(`INSERT INTO refresh_token (user_id_fk, token, expires_timestamp)
-						VALUES ($1, $2, $3)`, user.ID, hashToken, time.Now().Add(7*24*time.Hour))
+    VALUES ($1, $2, $3)`, user.ID, hashToken, time.Now().Add(7*24*time.Hour))
+		if err != nil {
+			http.Error(w, "Can't save token", 500)
+			return
+		}
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

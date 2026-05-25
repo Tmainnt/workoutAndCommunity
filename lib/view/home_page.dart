@@ -1,10 +1,16 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:woc/model/post.dart';
 import 'package:woc/model/user.dart';
 import 'package:woc/provider/user_provider.dart';
+import 'package:woc/service/post_service.dart';
 import 'package:woc/view/authentication/login_form.dart';
 import 'package:woc/view/community/chat_page.dart';
 import 'package:woc/view/community/post_page.dart';
+import 'package:woc/widget/community/create_post_card.dart';
 import 'package:woc/widget/navbar/top_navbar.dart';
 import 'package:woc/theme/text_color.dart';
 import 'package:woc/theme/widget_color.dart';
@@ -19,6 +25,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   WidgetColor widgetColor = WidgetColor();
   TextColor textColor = TextColor();
+  PostService postService = PostService();
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +177,21 @@ class HomePageState extends State<HomePage> {
           },
         ),
       ),
-      body: Center(child: Text("This is Home Page!")),
+      body: FutureBuilder<List<Post>>(
+        future: postService.readAllPost(),
+        builder: (context, snapshot) {
+          final checkSnapshot = postService.checkHasData(snapshot);
+          if (checkSnapshot.runtimeType != Bool) {
+            return checkSnapshot;
+          }
+
+          final data = snapshot.data!;
+          return ListView.builder(
+            itemBuilder: (context, index) => CreatePostCard(post: data[index]),
+            itemCount: data.length + 1,
+          );
+        },
+      ),
     );
   }
 
